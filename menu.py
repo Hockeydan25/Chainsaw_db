@@ -17,7 +17,6 @@ def main():
     4. Delete record 
     5. Quit
     """
-    create_table()
     
     while True:
         print(menu_text)
@@ -39,18 +38,19 @@ def main():
 def create_table():
     with sqlite3.connect(db) as conn:  #creating the table for jugglers records.
         conn.execute('CREATE TABLE IF NOT EXISTS jugglers (name text, country text, catch_count int)')  
-    #need to have:IF NOT EXISTS for tables and DB's.
+    conn.commit  #need to have:IF NOT EXISTS for tables and DB's.
     conn.close()   
 
 
-# def insert_record_holders_data():
-#     with sqlite3.connect(db) as conn:
-#     #THIS WILL keep creating if you re-reun
-#         conn.execute('INSERT INTO jugglers VALUES ("Janne Mustonen", "Finland", "98")' )
-#         conn.execute('INSERT INTO jugglers VALUES ("Ian Stewart", "Canada", 94)')
-#         conn.execute('INSERT INTO jugglers VALUES ("Aaron Greg", "Canada", "88")' )
-#         conn.execute('INSERT INTO jugglers VALUES ("Chad Taylor", "USA", 78)')
-#     conn.close()  
+def insert_record_holders_data():
+    with sqlite3.connect(db) as conn:
+    #THIS WILL keep creating if you re-reun
+        conn.execute('INSERT INTO jugglers VALUES ("Janne Mustonen", "Finland", "98")' )
+        conn.execute('INSERT INTO jugglers VALUES ("Ian Stewart", "Canada", 94)')
+        conn.execute('INSERT INTO jugglers VALUES ("Aaron Greg", "Canada", "88")' )
+        conn.execute('INSERT INTO jugglers VALUES ("Chad Taylor", "USA", 78)')
+
+    conn.close()  
 
          
 def display_all_records():
@@ -77,16 +77,18 @@ def edit_existing_record():
     edit_name = input('enter jugglers name to edit: ')
     edit_catch_count = int(input('enter new number of catches: '))
     with sqlite3.connect(db) as conn:
-        conn.execute('UPDATE jugglers SET name = ? WHERE catch_count = ?', (edit_name, edit_catch_count) )
+        conn.execute('UPDATE jugglers SET name = ? WHERE catch_count = ?', (edit_name, edit_catch_count,) )
+    
     conn.close()
 
 
 #'todo delete existing record. What if user wants to delete record that does not exist?'
-def delete_record(jugglers_name):
-    jugglers_name = '' 
+def delete_record():
+    delete_name = input('enter jugglers name to edit: ')
+    vehicle = vehicle.upper().strip() 
     with sqlite3.connect(db) as conn:
-        conn.execute('DELETE FROM jugglers WHERE name = ?', (jugglers_name, ) )
-    # does it matter the order here?
+        conn.execute('DELETE FROM jugglers WHERE name = ?', (delete_name,  ))
+    #currently only exact match deletes record, thats a good thing    
     conn.close()
 
 
