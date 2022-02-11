@@ -78,15 +78,17 @@ def display_all_records():
 
 
 def search_records_by_name():
-    search_name = input('enter new jugglers name: ')
-    search_cases = search_name.lower() 
-    conn = sqlite3.connect(db)
-    results = conn.execute('SELECT * FROM jugglers WHERE name like ?', (search_cases, ))
-    first_row = results.fetchone()
-    if first_row:
-        print('\nYour jugglers record is:', first_row )
-    else:
-        print('\nnot found in database')     
+    try:
+        search_name = input('enter new jugglers name: ')
+        search_cases = search_name.lower() 
+        conn = sqlite3.connect(db)
+        results = conn.execute('SELECT * FROM jugglers WHERE name like ?', (search_cases, ))
+        first_row = results.fetchone()
+        for row in first_row:
+                print('\nYour jugglers name: ', row)                     
+    except:
+        print('\nnot found in database')   
+            
     conn.close()
 
 
@@ -121,17 +123,17 @@ def delete_record():
         try:                 
             for row in conn.execute('SELECT * FROM jugglers WHERE lower(name) like ?', (delete_cases, )):
                 conn.execute('DELETE FROM jugglers WHERE name = ? ', (row[0],  ))
-                print('Your juggler:', delete_cases, 'was deleted, please use menu to verify.')           
-        except:                   
-               print('not found in database')     
-        #conn.execute('DELETE FROM jugglers WHERE name = ?', (delete_cases,  ))
+                print('\nYour juggler:', delete_cases, 'was deleted, \nplease use menu to list all to verify.')           
+        except Exception as e:                   
+               print('\nnot found in database', e)     
+        
         #currently only exact match deletes record, update with any case entery sqlite does care case.   
     conn.close()
 
 def message(msg):
     """ Prints a message for the user
     :param msg: the message to print"""
-    print(msg,)
+    print(msg)
 
 class RecordError(Exception):
     pass
