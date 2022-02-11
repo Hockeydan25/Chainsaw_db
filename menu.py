@@ -32,8 +32,6 @@ def main():
             delete_record()
         elif choice == '5':
             break
-        elif choice == 'Quit' or choice == 'quit':
-            break
         else:
             print('Not a valid selection, please try again')
 
