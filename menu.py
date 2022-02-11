@@ -64,14 +64,14 @@ def insert_record_holders_data():
         conn.execute('INSERT INTO jugglers VALUES ("Ian Stewart", "Canada", 94)')
         conn.execute('INSERT INTO jugglers VALUES ("Aaron Greg", "Canada", "88")' )
         conn.execute('INSERT INTO jugglers VALUES ("Chad Taylor", "USA", 78)')
-            
+
     conn.close()  
 
          
 def display_all_records():
     conn = sqlite3.connect(db)  # connects datbase link
     results = conn.execute('SELECT * FROM jugglers')  #calls for all records from db for table jugglers 
-    print('All jugglers records: ')
+    message('\nAll jugglers records:\n ')
     for row in results:
         print(row)
     conn.close()
@@ -102,13 +102,14 @@ def add_new_record():
 # edits an existing record. Message passed if user wants to edit record that does not exist?'
 def edit_existing_record():
     #conn = sqlite3.connect(db)
-    edit_name = input('enter jugglers name to edit: ')
     edit_catch_count = int(input('enter new number of catches: '))
+    edit_name = input('enter name which juggler to edit: ')
     with sqlite3.connect(db) as conn:
         try:                  
-            conn.execute('UPDATE jugglers SET name = ? WHERE catch_count = ?', (edit_name, edit_catch_count,))
+            conn.execute('UPDATE jugglers SET catch_count = ? WHERE name = ?', (edit_catch_count, edit_name ))
         except:
-            print('record does not exist')      
+            message('record does not exist')  
+    conn.commit            
     conn.close()
 
 
@@ -130,7 +131,7 @@ def delete_record():
 def message(msg):
     """ Prints a message for the user
     :param msg: the message to print"""
-    print(msg)
+    print(msg,)
 
 class RecordError(Exception):
     pass
