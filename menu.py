@@ -7,6 +7,9 @@ import sqlite3
 db = 'chainsaw_juggling_records_db.sqlite'
 
 
+class RecordError(Exception):
+    pass
+
 def main():
     menu_text = """    
     Chainsaw Juggling Record Holders as of July 2018
@@ -103,14 +106,12 @@ def delete_record():
     delete_name = input('enter jugglers name to delete: ')
     delete_cases = delete_name.upper() or delete_name.lower()        
     with sqlite3.connect(db) as conn:
-        results = conn.execute('SELECT * FROM jugglers WHERE name like ?', (delete_cases, ))
-    first_rows = results.fetchone()
-    if first_rows:
-        for first_row in first_rows: 
-            conn.execute('DELETE FROM jugglers WHERE name = ? ', (first_row,  ))
-            print('Your juggler:', delete_cases, 'was deleted, please use menu to verify.')
-    else:
-        print('not found in database')     
+        if delete_cases:    
+            for row in conn.execute('SELECT * FROM jugglers WHERE name like ?', (delete_cases, )):
+                conn.execute('DELETE FROM jugglers WHERE name = ? ', (row[0],  ))
+                print('Your juggler:', delete_cases, 'was deleted, please use menu to verify.')           
+        else:       
+            print('not found in database')     
         #conn.execute('DELETE FROM jugglers WHERE name = ?', (delete_cases,  ))
         #currently only exact match deletes record, update with any case entery sqlite does care case.   
     conn.close()
