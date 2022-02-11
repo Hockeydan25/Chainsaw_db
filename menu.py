@@ -67,8 +67,9 @@ def display_all_records():
 
 def search_records_by_name():
     search_name = input('enter new jugglers name: ')
+    search_cases = search_name.upper() or search_name.lower() 
     conn = sqlite3.connect(db)
-    results = conn.execute('SELECT * FROM jugglers WHERE name like ?', (search_name, ))
+    results = conn.execute('SELECT * FROM jugglers WHERE name like ?', (search_cases, ))
     first_row = results.fetchone()
     if first_row:
         print('Your jugglers record is: ', first_row)
@@ -99,11 +100,19 @@ def edit_existing_record():
 
 #'todo delete existing record. What if user wants to delete record that does not exist?'
 def delete_record():
-    delete_name = input('enter jugglers name to edit: ')
+    delete_name = input('enter jugglers name to delete: ')
     delete_cases = delete_name.upper() or delete_name.lower()        
     with sqlite3.connect(db) as conn:
-        conn.execute('DELETE FROM jugglers WHERE name = ?', (delete_cases,  ))
-    #currently only exact match deletes record, update with any case entery sqlite does care case.   
+        results = conn.execute('SELECT * FROM jugglers WHERE name like ?', (delete_cases, ))
+    first_rows = results.fetchone()
+    if first_rows:
+        for first_row in first_rows: 
+            conn.execute('DELETE FROM jugglers WHERE name = ? ', (first_row,  ))
+            print('Your juggler:', delete_cases, 'was deleted, please use menu to verify.')
+    else:
+        print('not found in database')     
+        #conn.execute('DELETE FROM jugglers WHERE name = ?', (delete_cases,  ))
+        #currently only exact match deletes record, update with any case entery sqlite does care case.   
     conn.close()
 
    
