@@ -85,12 +85,12 @@ def edit_existing_record():
 #'todo delete existing record. What if user wants to delete record that does not exist?'
 def delete_record():
     delete_name = input('enter jugglers name to edit: ')
-    vehicle = vehicle.upper().strip() 
+    delete_cases = delete_name.upper() or delete_name.lower()        
     with sqlite3.connect(db) as conn:
-        conn.execute('DELETE FROM jugglers WHERE name = ?', (delete_name,  ))
-    #currently only exact match deletes record, thats a good thing    
+        conn.execute('DELETE FROM jugglers WHERE name = ?', (delete_cases,  ))
+    #currently only exact match deletes record, update with any case entery sqlite does care case.   
     conn.close()
-
-
+    
+   
 if __name__ == '__main__':
     main()
