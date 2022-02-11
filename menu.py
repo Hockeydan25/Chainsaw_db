@@ -15,7 +15,8 @@ def main():
     2. Add new record
     3. Edit existing record
     4. Delete record 
-    5. Quit
+    5. Search by Name
+    6. Quit
     """
     
     while True:
@@ -30,6 +31,8 @@ def main():
         elif choice == '4':
             delete_record()
         elif choice == '5':
+            search_records_by_name()    
+        elif choice == '6':
             break
         else:
             print('Not a valid selection, please try again')
@@ -62,6 +65,18 @@ def display_all_records():
     conn.close()
 
 
+def search_records_by_name():
+    search_name = input('enter new jugglers name: ')
+    conn = sqlite3.connect(db)
+    results = conn.execute('SELECT * FROM jugglers WHERE name like ?', (search_name, ))
+    first_row = results.fetchone()
+    if first_row:
+        print('Your jugglers record is: ', first_row)
+    else:
+        print('not found in database')     
+    conn.close()
+
+
 def add_new_record():
     new_name = input('enter new jugglers name: ')
     new_country = input('enter Country name: ')
@@ -90,7 +105,7 @@ def delete_record():
         conn.execute('DELETE FROM jugglers WHERE name = ?', (delete_cases,  ))
     #currently only exact match deletes record, update with any case entery sqlite does care case.   
     conn.close()
-    
+
    
 if __name__ == '__main__':
     main()
