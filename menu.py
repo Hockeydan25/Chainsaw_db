@@ -6,12 +6,13 @@ A menu - you need to add the database and fill in the functions.
 import sqlite3
 
 
-db = 'chainsaw_juggling_records_db.sqlite'
+db = 'chainsaw_juggling_records_db.sqlite'  #create datbase and variable is assigned.
 
 
-def main():
+def main():  #menu is dispyed for used selections and access. while true loop run for numbered options ans call functions. 
+    
     menu_text = """  
-  
+    
     Chainsaw Juggling Record Holders as of July 2018
     ************************************************
     1. Display all records
@@ -21,8 +22,8 @@ def main():
     5. Search by Name
     6. Quit
     """
-    create_table()  #calling to create a new table.
-    insert_record_holders_data()  # intial data incerted. 
+    create_table()  #calling to create a new table. Will rebuild with each play, no data saved
+    insert_record_holders_data()  # intial data inserted for info and queries. 
 
     while True:
         print(menu_text)
@@ -48,7 +49,7 @@ def main():
 def create_table():
     with sqlite3.connect(db) as conn:  #creating the table for jugglers records.
         conn.execute('CREATE TABLE IF NOT EXISTS jugglers (name text, country text, catch_count int)')  
-    #conn.commit  #need to have:IF NOT EXISTS for tables and DB's.
+    #need to have:IF NOT EXISTS for tables and DB's. THis program 
     conn.close()   
 
 def drop_table_on_quit():
@@ -95,13 +96,22 @@ def search_records_by_name():
 def add_new_record():
     new_name = input('enter new jugglers name: ')
     new_country = input('enter Country name: ')
-    new_catch_count = int(input('enter number of catches: '))
-    # no format strings {new_id} use paramerized value queries, sql statement.
+    new_catch_count = int(input('enter number of catches: '))     
+    #new_name = new_name.lower()      
     with sqlite3.connect(db) as conn:
-        conn.execute('INSERT INTO jugglers VALUES (?, ?, ?)', (new_name, new_country, new_catch_count) )
+        try:           
+            row_add = conn.execute('SELECT * FROM jugglers WHERE name like ?', (new_name,))
+            first_row = row_add.fetchone()
+            if first_row:
+                print(new_name, '\'s name is in our db already!')                        
+            else:
+                conn.execute('INSERT INTO jugglers VALUES (?, ?, ?)', (new_name, new_country, new_catch_count) )
+                print(new_name, '\'s name has added to our db.')
+        except Exception as e:                   
+               print('ERROR DB', e)    
     conn.close()
 
-# edits an existing record. Message passed if user wants to edit record that does not exist?'
+
 def edit_existing_record():
     #conn = sqlite3.connect(db)
     edit_catch_count = int(input('enter new number of catches: '))
@@ -110,8 +120,8 @@ def edit_existing_record():
         try:                  
             conn.execute('UPDATE jugglers SET catch_count = ? WHERE name = ?', (edit_catch_count, edit_name ))
         except:
-            message('record does not exist')  
-    conn.commit            
+            print('record does not exist')  
+        # edits an existing record. message passed if user wants to edit record that does not exist?'
     conn.close()
 
 
@@ -125,15 +135,15 @@ def delete_record():
                 conn.execute('DELETE FROM jugglers WHERE name = ? ', (row[0],  ))
                 print('\nYour juggler:', delete_cases, 'was deleted, \nplease use menu to list all to verify.')           
         except Exception as e:                   
-               print('\nnot found in database', e)     
-        
+               print('\nnot found in database', e)             
         #currently only exact match deletes record, update with any case entery sqlite does care case.   
     conn.close()
 
-def message(msg):
+def message(msg): 
     """ Prints a message for the user
     :param msg: the message to print"""
-    print(msg)
+    print(msg)  # todo pass print staements.
+
 
 class RecordError(Exception):
     pass
