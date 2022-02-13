@@ -91,25 +91,26 @@ def search_records_by_name():
         print('\nnot found in database')   
             
     conn.close()
+    
 
+def add_new_record():                
+        new_name = input('enter new jugglers name: ')
+        new_country = input('enter Country name: ')
+        new_catch_count = int(input('enter number of catches: ')) 
+        #addsnew reords to db, duplicate check in row with select query to db, tells user name, menu reloads. 
+        with sqlite3.connect(db) as conn:
+            try:
+                row_add = conn.execute('SELECT * FROM jugglers WHERE name like ?', (new_name,))
+                first_row = row_add.fetchone()
+                if first_row:
+                    print(new_name, '\'s name is in our db already!')                        
+                else:
+                    conn.execute('INSERT INTO jugglers VALUES (?, ?, ?)', (new_name, new_country, new_catch_count) )
+                    print(new_name, '\'s name has added to our db.')
+            except ValueError:                   
+                print('invalid') 
 
-def add_new_record():
-    new_name = input('enter new jugglers name: ')
-    new_country = input('enter Country name: ')
-    new_catch_count = int(input('enter number of catches: '))     
-    #new_name = new_name.lower()      
-    with sqlite3.connect(db) as conn:
-        try:           
-            row_add = conn.execute('SELECT * FROM jugglers WHERE name like ?', (new_name,))
-            first_row = row_add.fetchone()
-            if first_row:
-                print(new_name, '\'s name is in our db already!')                        
-            else:
-                conn.execute('INSERT INTO jugglers VALUES (?, ?, ?)', (new_name, new_country, new_catch_count) )
-                print(new_name, '\'s name has added to our db.')
-        except Exception as e:                   
-               print('ERROR DB', e)    
-    conn.close()
+            conn.close()
 
 
 def edit_existing_record():
