@@ -6,10 +6,10 @@ A menu - you need to add the database and fill in the functions.
 import sqlite3
 
 
-db = 'chainsaw_juggling_records_db.sqlite'  #create datbase and variable is assigned.
+db = 'chainsaw_juggling_records_db.sqlite'  # create datbase and variable is assigned.
 
 
-def main():  #menu is dispyed for used selections and access. while true loop run for numbered options ans call functions. 
+def main():  # menu is dispyed for used selections and access. while true loop run for numbered options ans call functions. 
     
     menu_text = """  
     
@@ -22,7 +22,7 @@ def main():  #menu is dispyed for used selections and access. while true loop ru
     5. Search by Name
     6. Quit
     """
-    create_table()  #calling to create a new table. Will rebuild with each play, no data saved
+    create_table()  # calling to create a new table. Will rebuild with each play, no data saved
     insert_record_holders_data()  # intial data inserted for info and queries. 
 
     while True:
@@ -44,7 +44,7 @@ def main():  #menu is dispyed for used selections and access. while true loop ru
             break
         else:
             print('Not a valid selection, please try again')
-            #simple value check that seletion is a int and is valid selection
+            # simple value check that seletion is a int and is valid selection
 
 def create_table():
     with sqlite3.connect(db) as conn:  #creating the table for jugglers records.
@@ -114,9 +114,14 @@ def add_new_record():
 
 
 def edit_existing_record():
-    #conn = sqlite3.connect(db)
-    edit_catch_count = int(input('enter new number of catches: '))
-    edit_name = input('enter name which juggler to edit: ')
+    edit_name = input('enter name which juggler to edit: ')  # getting name for edit
+    edit_catch_count = input('enter new number of catches: ')  # getting the new record unbmer for updating
+    while True:  # needs to check number is an int
+        if edit_catch_count.isnumeric() is False:
+            edit_catch_count = input('Please enter a positve number ')
+        else:
+             break   
+    edit_catch_count = int(edit_catch_count)           
     with sqlite3.connect(db) as conn:
         try:                  
             conn.execute('UPDATE jugglers SET catch_count = ? WHERE name = ?', (edit_catch_count, edit_name ))
@@ -126,7 +131,7 @@ def edit_existing_record():
     conn.close()
 
 
-#'todo delete existing record. What if user wants to delete record that does not exist?'
+# deletes existing record. What if user wants to delete record that does not exist?
 def delete_record():
     delete_name = input('enter jugglers name to delete: ')
     delete_cases = delete_name.lower()     
